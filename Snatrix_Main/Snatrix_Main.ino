@@ -1,9 +1,6 @@
 #include <Adafruit_CircuitPlayground.h>
-
-//Declare a 16 by 16 board
-char board[16][16]; 
 //Declare a 16 by 16 2D array of bools corresponding to the 16 by 16 board
-bool boardStatus[16][16];
+bool board[16][16];
 
 //Define a variable to store current elapsed time
 unsigned long currentTime; 
@@ -18,9 +15,8 @@ void setup() {
   //Populate board and boardStatus
   for(int row = 0; row < 16; row++) {
     for(int column = 0; column < 16; column++) {
-      //Black squares to represent when the pixel is off
-      board[row][column] = '0';
-      boardStatus[row][column] = 0; 
+      //Initialize entire board as off
+      board[row][column] = 0;
     }
   }
 }
@@ -52,5 +48,6 @@ class Snake
   //Integer variable pointing to the tail of the snake (pointer to the location 2D array)
   int tail; 
   //Integer variable pointing to the head of the snake (pointer to the location 2D array) 
-}
+  int head;
+};
 
