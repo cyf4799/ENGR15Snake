@@ -47,7 +47,10 @@ void loop() {
 //Snake Class
 class Snake 
 {
-  bool Xlocations[16*16];
-  bool Ylocations[16*16];
+  //2D array of int x and y coordinates of the snake 
+  int location[256][2]; 
+  //Integer variable pointing to the tail of the snake (pointer to the location 2D array)
+  int tail; 
+  
 }
 
