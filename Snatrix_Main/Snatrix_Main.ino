@@ -51,6 +51,6 @@ class Snake
   int location[256][2]; 
   //Integer variable pointing to the tail of the snake (pointer to the location 2D array)
   int tail; 
-  
+  //Integer variable pointing to the head of the snake (pointer to the location 2D array) 
 }
 
