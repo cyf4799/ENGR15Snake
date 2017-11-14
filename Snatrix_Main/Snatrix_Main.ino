@@ -3,7 +3,7 @@
 //Snake Class
 class Snake 
 {
-  public: //Set all variables and functions as public
+  private: //Set all variables and functions as public
   //2D array of int row and column coordinates of the snake 
   int location[256][2]; 
   //Integer variable pointing to the tail of the snake (pointer to the location 2D array)
@@ -13,6 +13,7 @@ class Snake
   //Character variable specifying snake direction
   char directionSnake; 
 
+  public:
   //Constructor for Snake
   Snake() {
     //Set initial location of snake to be: (7, 6), (7, 7), (7, 8), (7, 9)
@@ -43,6 +44,14 @@ class Snake
   }
   int getLocationColumn(int y) {
     return location[y][1];
+  }
+  setDirection(char dir) {
+    if(dir == 'u' || dir || 'd' && dir || 'l' && dir || 'r') {
+      directionSnake = dir; 
+    }
+  }
+  newLocation() { 
+    
   }
 };
 
@@ -90,6 +99,8 @@ void loop() {
     }
 
     //Update Snake location 
+    
+    //Update Snake location on Board 
     for(int coordinate = snake.getTail(); coordinate <= snake.getHead(); coordinate++) {
        int snakeRow = snake.getLocationRow(coordinate);
        int snakeColumn = snake.getLocationColumn(coordinate);
