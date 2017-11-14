@@ -112,6 +112,35 @@ class Snake
   }
 };
 
+//Pellet Class 
+class Pellet 
+{
+  private:
+  //Define an integer variable for the row coordinate of the pellet
+  int rowLocation;
+  //Define an integer variable for the column coordinate of the pellet
+  int columnLocation;
+  public:
+  //Constructor method 
+  //Set initial location
+  Pellet() {
+    randomizeLocation();
+  }
+  //Method for getting the row of the pellet 
+  int getRow() {
+    return rowLocation;
+  }
+  //Method for getting the column of the pellet
+  int getColumn() {
+    return columnLocation;
+  }
+  //Method for randomizing location 
+  randomizeLocation() {
+    rowLocation = random(0, 16);
+    columnLocation = random(0, 16);
+  }
+};
+
 //Declare a 16 by 16 2D array of bools corresponding to the 16 by 16 board
 bool board[16][16];
 
