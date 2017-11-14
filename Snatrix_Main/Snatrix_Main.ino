@@ -50,8 +50,62 @@ class Snake
       directionSnake = dir; 
     }
   }
-  newLocation() { 
-    
+  bool newLocation() { 
+    //Create a outOfBounds checker to be returned
+    bool outOfBounds = false;
+    //save previous head and tail locations 
+    int prevHead = head;
+    int prevTail = tail;
+    //set new head location
+    head = head + 1;
+    //set new tail location
+    tail = tail + 1;
+    //Wrap around the circular array if head > 255 or tail > 255
+    if(head > 255) {
+      head = 0;
+    }
+    if(tail > 255) {
+      tail > 255;
+    }
+    //Get previous location
+    int newRow = getLocationRow(prevHead);
+    int newColumn = getLocationColumn(prevHead); 
+    //Update location according to direction
+    switch(directionSnake) {
+      case 'u': 
+        newRow = newRow - 1; 
+        break;
+      case 'd':
+        newRow = newRow + 1;
+        break;
+      case 'l':
+        newColumn = newColumn - 1;
+        break;
+      case 'r':
+        newColumn = newColumn + 1;
+        break;
+    }
+    //Check for out of bounds. Reset if out of bounds.
+      if(newRow >= 16) {
+        newRow = newRow - 1;
+        outOfBounds = true;    
+      }
+      if(newRow < 0) {
+        newRow = newRow + 1; 
+        outOfBounds = true;   
+      }
+      if(newColumn >= 16) {
+        newColumn = newColumn - 1;   
+        outOfBounds = true; 
+      }
+      if(newColumn < 0) {
+        newColumn = newColumn + 1;  
+        outOfBounds = true;  
+      }
+    //Update new head location
+    location[head][0] = newRow;
+    location[head][1] = newColumn;
+    return outOfBounds;
   }
 };
 
@@ -68,6 +122,9 @@ const long interval = 1000;
 //Define a snake object
 Snake snake;
 
+//Define a boolean to check whether to continue the game
+bool runGame;
+
 void setup() {
   CircuitPlayground.begin();
   Serial.begin(9600);
@@ -80,9 +137,13 @@ void setup() {
   }
   //Initialize a snake object
   snake = Snake();
+  
+  //Set runGame to be true
+  runGame = true;
 }
 
 void loop() {
+  while(runGame) {
   //Set currentTime equal to millis
   currentTime = millis(); 
   
@@ -97,8 +158,6 @@ void loop() {
         board[row][column] = 0;
       }
     }
-
-    //Update Snake location 
     
     //Update Snake location on Board 
     for(int coordinate = snake.getTail(); coordinate <= snake.getHead(); coordinate++) {
@@ -115,5 +174,14 @@ void loop() {
       Serial.println("");
     }
     Serial.println("");
+
+    //Update Snake location 
+    bool outOfBounds = snake.newLocation();
+    if(outOfBounds) {
+      Serial.print("\n");
+      Serial.print("GAME OVER!");
+      runGame = false;
+    }
+  }
   }
 }
