@@ -68,7 +68,7 @@ class Snake
       head = 0;
     }
     if(tail > 255) {
-      tail > 255;
+      tail = 0;
     }
     //Get previous location
     int newRow = getLocationRow(prevHead);
@@ -110,6 +110,17 @@ class Snake
     location[head][1] = newColumn;
     return outOfBounds;
   }
+  //Method for eating Pellets:
+  //Increase length by changing head node without changing the tail node
+  bool eatPellet() {
+    //Use newLocation() method but reset the tail node
+    bool outOfBounds = newLocation();
+    //Set tail pointer back to previous location 
+    tail = tail - 1;
+    if(tail < 0) {
+      tail = 255;
+    }
+  }
 };
 
 //Pellet Class 
@@ -149,10 +160,13 @@ unsigned long currentTime;
 //Define a variable to store time of last board update 
 unsigned long previousTime = 0; 
 //Define a constant for board update interval
-const long interval = 3000;
+const long interval = 1000;
 
 //Define a snake object
 Snake snake;
+
+//Define a pellet object
+Pellet pellet; 
 
 //Define a boolean to check whether to continue the game
 bool runGame;
@@ -175,6 +189,9 @@ void setup() {
   }
   //Initialize a snake object
   snake = Snake();
+
+  //Initialize a pellet object 
+  pellet = Pellet();
   
   //Set runGame to be true
   runGame = true;
@@ -255,6 +272,11 @@ void loop() {
        int snakeColumn = snake.getLocationColumn(coordinate);
        board[snakeRow][snakeColumn] = 1;
     }
+
+    //Update pellet location on board
+    int pelletRow = pellet.getRow();
+    int pelletColumn = pellet.getColumn();
+    board[pelletRow][pelletColumn] = 3;
     
     //Print board to Serial
     for(int row = 0; row < 16; row++) {
@@ -265,8 +287,19 @@ void loop() {
     }
     Serial.println("");
 
+    //define a boolean variable to check if the snake is out of bounds
+     bool outOfBounds = false;
     //Update Snake location 
-    bool outOfBounds = snake.newLocation();
+    //Check if snake is in contact with the pellet 
+    if(snake.getLocationRow(snake.getHead()) == pellet.getRow() && snake.getLocationColumn(snake.getHead()) == pellet.getColumn()) {
+      //If the snake is in contact with the pellet, randomize pellet location, increase snake length 
+      pellet.randomizeLocation();
+      outOfBounds = snake.eatPellet();
+    } else {
+      outOfBounds = snake.newLocation();
+    }
+    //Check if out of bounds 
+    //If out of bounds, end game
     if(outOfBounds) {
       Serial.print("\n");
       Serial.print("GAME OVER!");
