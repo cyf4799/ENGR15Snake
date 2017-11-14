@@ -10,6 +10,8 @@ class Snake
   int tail; 
   //Integer variable pointing to the head of the snake (pointer to the location 2D array) 
   int head;
+  //Character variable specifying snake direction
+  char directionSnake; 
 
   //Constructor for Snake
   Snake() {
@@ -26,6 +28,9 @@ class Snake
     //Set head and tail pointers 
     tail = 0;
     head = 3;   
+
+    //Set direction to right
+    directionSnake = 'r';
   }
   int getTail() {
     return tail;
