@@ -45,6 +45,9 @@ class Snake
   int getLocationColumn(int y) {
     return location[y][1];
   }
+  char getDirection() {
+    return directionSnake;
+  }
   setDirection(char dir) {
     if(dir == 'u' || dir || 'd' && dir || 'l' && dir || 'r') {
       directionSnake = dir; 
@@ -117,13 +120,19 @@ unsigned long currentTime;
 //Define a variable to store time of last board update 
 unsigned long previousTime = 0; 
 //Define a constant for board update interval
-const long interval = 1000;
+const long interval = 3000;
 
 //Define a snake object
 Snake snake;
 
 //Define a boolean to check whether to continue the game
 bool runGame;
+
+//Define boolean values for checking if buttons are pressed
+bool leftCur;
+bool leftPrev;
+bool rightCur;
+bool rightPrev;
 
 void setup() {
   CircuitPlayground.begin();
@@ -146,6 +155,58 @@ void loop() {
   while(runGame) {
   //Set currentTime equal to millis
   currentTime = millis(); 
+
+  //Assign leftCur to left button input and rightCur to right button input 
+  leftCur = CircuitPlayground.leftButton();
+  rightCur = CircuitPlayground.rightButton();
+
+  //Check if left button has been pressed and released 
+  if(leftCur != leftPrev && leftPrev == 1) {
+    //Toggle direction 
+    char snakeCurDirection = snake.getDirection();
+    char snakeFutureDirection;
+    switch(snakeCurDirection) {
+      case 'r': 
+        snakeFutureDirection = 'u';
+        break;
+      case 'u':
+        snakeFutureDirection = 'l';
+        break;
+      case 'l':
+        snakeFutureDirection = 'd';
+        break;
+      case 'd':
+        snakeFutureDirection = 'r';
+        break;
+    }
+    snake.setDirection(snakeFutureDirection);
+    Serial.println(snakeFutureDirection);
+  }
+  //Check if right button has been pressed and released 
+  if(rightCur != rightPrev && rightPrev == 1) {
+    //Toggle direction 
+    char snakeCurDirection = snake.getDirection();
+    char snakeFutureDirection;
+    switch(snakeCurDirection) {
+      case 'r': 
+        snakeFutureDirection = 'd';
+        break;
+      case 'd':
+        snakeFutureDirection = 'l';
+        break;
+      case 'l':
+        snakeFutureDirection = 'u';
+        break;
+      case 'u':
+        snakeFutureDirection = 'r';
+        break;
+    }
+    snake.setDirection(snakeFutureDirection);
+    Serial.println(snakeFutureDirection);
+  }
+  //Set current state as previous state for buttons
+  leftPrev = leftCur;
+  rightPrev = rightCur;
   
   //Update board for every defined interval of time
   if(currentTime - previousTime >= interval) {
@@ -183,5 +244,6 @@ void loop() {
       runGame = false;
     }
   }
+  
   }
 }
