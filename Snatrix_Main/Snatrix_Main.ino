@@ -304,6 +304,39 @@ void loop() {
       Serial.print("GAME OVER!");
       runGame = false;
     }
+    //Check if the snake has run into itself 
+    bool hitItself = false; 
+    //If the head position is less than the tail position (circular array), iterate from head down to 0 then from max length of the snake location array to tail 
+    if(snake.getHead() < snake.getTail()) {
+      for(int x = snake.getHead() - 1; x >= 0; x--) {
+        //Check if the head of the Snake is in the same location as any other part of the snake body
+        if(snake.getLocationRow(snake.getHead()) == snake.getLocationRow(x) && snake.getLocationColumn(snake.getHead()) == snake.getLocationColumn(x)) {
+          hitItself = true;
+          break;
+        }
+      }
+      for(int x = 255; x >= snake.getTail(); x--) {
+        //Check if the head of the Snake is in the same location as any other part of the snake body
+        if(snake.getLocationRow(snake.getHead()) == snake.getLocationRow(x) && snake.getLocationColumn(snake.getHead()) == snake.getLocationColumn(x)) {
+          hitItself = true;
+          break;
+        }
+      }
+    } else {
+      for(int x = snake.getHead() - 1; x >= snake.getTail(); x--) {
+        //Check if the head of the Snake is in the same location as any other part of the snake body
+        if(snake.getLocationRow(snake.getHead()) == snake.getLocationRow(x) && snake.getLocationColumn(snake.getHead()) == snake.getLocationColumn(x)) {
+          hitItself = true;
+          break;
+        }
+      }
+    }
+   //If snake hits itself, end game
+    if(hitItself) {
+      Serial.print("\n");
+      Serial.print("GAME OVER!");
+      runGame = false;
+    } 
   }
   
   }
