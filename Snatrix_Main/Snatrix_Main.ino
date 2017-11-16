@@ -160,7 +160,7 @@ unsigned long currentTime;
 //Define a variable to store time of last board update 
 unsigned long previousTime = 0; 
 //Define a constant for board update interval
-const long interval = 1000;
+const long interval = 500;
 
 //Define a snake object
 Snake snake;
@@ -226,7 +226,6 @@ void loop() {
         break;
     }
     snake.setDirection(snakeFutureDirection);
-    Serial.println(snakeFutureDirection);
   }
   //Check if right button has been pressed and released 
   if(rightCur != rightPrev && rightPrev == 1) {
@@ -248,11 +247,11 @@ void loop() {
         break;
     }
     snake.setDirection(snakeFutureDirection);
-    Serial.println(snakeFutureDirection);
   }
   //Set current state as previous state for buttons
   leftPrev = leftCur;
   rightPrev = rightCur;
+  delayMicroseconds(50000);
   
   //Update board for every defined interval of time
   if(currentTime - previousTime >= interval) {
