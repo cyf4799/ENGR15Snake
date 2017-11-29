@@ -1,4 +1,10 @@
-#include <Adafruit_CircuitPlayground.h>
+//#include <Adafruit_CircuitPlayground.h>
+
+// Configure Arduino pin numbers
+//Configuration for joystick
+const int JOYSTICK_SW_pin = 2; // digital pin connected to switch output
+const int JOYSTICK_X_pin = 0; // analog pin connected to X output
+const int JOYSTICK_Y_pin = 1; // analog pin connected to Y output
 
 //Snake Class
 class Snake 
@@ -172,13 +178,15 @@ Pellet pellet;
 bool runGame;
 
 //Define boolean values for checking if buttons are pressed
+/*
 bool leftCur;
 bool leftPrev;
 bool rightCur;
 bool rightPrev;
+*/
 
 void setup() {
-  CircuitPlayground.begin();
+  //CircuitPlayground.begin();
   Serial.begin(9600);
   //Populate board and boardStatus
   for(int row = 0; row < 16; row++) {
@@ -195,12 +203,46 @@ void setup() {
   
   //Set runGame to be true
   runGame = true;
+
+  //Setup for Joystick
+  pinMode(JOYSTICK_SW_pin, INPUT);
+  digitalWrite(JOYSTICK_SW_pin, HIGH);
+  Serial.begin(9600);
 }
 
 void loop() {
   while(runGame) {
   //Set currentTime equal to millis
   currentTime = millis(); 
+
+  //Control using Joystick
+  int YAxisofJoyStick = analogRead(JOYSTICK_Y_pin);
+  int XAxisofJoyStick = analogRead(JOYSTICK_X_pin);
+
+  char snakeCurDirection = snake.getDirection(); 
+  char snakeFutureDirection; 
+
+  if(YAxisofJoyStick > 1000) { 
+    if(snakeCurDirection == 'l' || snakeCurDirection == 'r') {
+      snakeFutureDirection = 'u';
+    }
+  }
+  if(YAxisofJoyStick < 100) { 
+    if(snakeCurDirection == 'l' || snakeCurDirection == 'r') {
+      snakeFutureDirection = 'd';
+    }
+  }
+  if(XAxisofJoyStick > 1000) { 
+    if(snakeCurDirection == 'u' || snakeCurDirection == 'd') {
+      snakeFutureDirection = 'r';
+    }
+  }
+  if(XAxisofJoyStick < 100) { 
+    if(snakeCurDirection == 'u' || snakeCurDirection == 'd') {
+      snakeFutureDirection = 'l';
+    }
+  }
+  snake.setDirection(snakeFutureDirection);
   
   //Control using Circuit Playground Buttons 
   /*
@@ -301,13 +343,7 @@ void loop() {
     } else {
       outOfBounds = snake.newLocation();
     }
-    //Check if out of bounds 
-    //If out of bounds, end game
-    if(outOfBounds) {
-      Serial.print("\n");
-      Serial.print("GAME OVER!");
-      runGame = false;
-    }
+    
     //Check if the snake has run into itself 
     bool hitItself = false; 
     //If the head position is less than the tail position (circular array), iterate from head down to 0 then from max length of the snake location array to tail 
@@ -335,8 +371,8 @@ void loop() {
         }
       }
     }
-   //If snake hits itself, end game
-    if(hitItself) {
+   //If snake hits itself or goes out of bounds, end game
+    if(hitItself || outOfBounds) {
       Serial.print("\n");
       Serial.print("GAME OVER!");
       runGame = false;
