@@ -49,7 +49,7 @@ class Snake
     return directionSnake;
   }
   setDirection(char dir) {
-    if(dir == 'u' || dir || 'd' && dir || 'l' && dir || 'r') {
+    if(dir == 'u' || dir == 'd' || dir == 'l' || dir == 'r') {
       directionSnake = dir; 
     }
   }
