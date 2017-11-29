@@ -201,7 +201,9 @@ void loop() {
   while(runGame) {
   //Set currentTime equal to millis
   currentTime = millis(); 
-
+  
+  //Control using Circuit Playground Buttons 
+  /*
   //Assign leftCur to left button input and rightCur to right button input 
   leftCur = CircuitPlayground.leftButton();
   rightCur = CircuitPlayground.rightButton();
@@ -251,6 +253,8 @@ void loop() {
   //Set current state as previous state for buttons
   leftPrev = leftCur;
   rightPrev = rightCur;
+  */
+  
   delayMicroseconds(50000);
   
   //Update board for every defined interval of time
