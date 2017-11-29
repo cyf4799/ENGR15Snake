@@ -1,4 +1,12 @@
 //#include <Adafruit_CircuitPlayground.h>
+//Include libraries for LED Matrix control
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include "Adafruit_LEDBackpack.h"
+
+//Create LED Matrix
+Adafruit_8x16minimatrix matrix1 = Adafruit_8x16minimatrix();
+Adafruit_8x16minimatrix matrix2 = Adafruit_8x16minimatrix();
 
 // Configure Arduino pin numbers
 //Configuration for joystick
@@ -168,6 +176,45 @@ unsigned long previousTime = 0;
 //Define a constant for board update interval
 const long interval = 500;
 
+//Splash Screen 
+static const uint8_t PROGMEM
+  game_over_matrix_1[] =
+  { B00000000,
+    B01110111,
+    B01000101,
+    B01010111,
+    B01010101,
+    B01110101,
+    B00000000,
+    B00000000,
+    B00000000,
+    B01110101,
+    B01010101,
+    B01010101,
+    B01010101,
+    B01110010,
+    B00000000,
+    B00000000
+    },
+  game_over_matrix_2[] = 
+  { B00000000,
+    B01010110,
+    B01110100,
+    B01010110,
+    B01010100,
+    B01010110,
+    B00000000,
+    B00000000,
+    B00000000,
+    B01101110,
+    B01001010,
+    B01101110,
+    B01001100,
+    B01101010,
+    B00000000,
+    B00000000
+  };
+
 //Define a snake object
 Snake snake;
 
@@ -207,6 +254,10 @@ void setup() {
   //Setup for Joystick
   pinMode(JOYSTICK_SW_pin, INPUT);
   digitalWrite(JOYSTICK_SW_pin, HIGH);
+
+  //Setup for Matrices
+  matrix1.begin(0x70); 
+  matrix2.begin(0x72);
   Serial.begin(9600);
 }
 
@@ -332,6 +383,21 @@ void loop() {
     }
     Serial.println("");
 
+    //Print Board to LED Matrix 
+    //Print first half of board to matrix1
+    for(int row = 0; row < 16; row++) {
+      for(int column = 0; column < 8; column++) {
+        matrix1.drawPixel(column, row, board[row][column]);
+      }
+    }
+    for(int row = 0; row < 16; row++) {
+      for(int column = 8; column < 16; column++) {
+        matrix2.drawPixel(column-8, row, board[row][column]);
+      }
+    }
+    matrix1.writeDisplay();
+    matrix2.writeDisplay();  // write the changes we just made to the display
+    
     //define a boolean variable to check if the snake is out of bounds
      bool outOfBounds = false;
     //Update Snake location 
@@ -380,4 +446,13 @@ void loop() {
   }
   
   }
+
+  //Show Game Over Splash Screen
+  matrix1.clear();
+  matrix2.clear();
+  matrix1.drawBitmap(0,0,game_over_matrix_1, 8, 16, 1);
+  matrix2.drawBitmap(0,0,game_over_matrix_2, 8, 16, 1);
+  matrix1.writeDisplay();
+  matrix2.writeDisplay();
+  
 }

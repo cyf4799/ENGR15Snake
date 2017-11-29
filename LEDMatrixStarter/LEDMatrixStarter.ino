@@ -20,14 +20,16 @@
 #include <Adafruit_GFX.h>
 #include "Adafruit_LEDBackpack.h"
 
-Adafruit_8x16minimatrix matrix = Adafruit_8x16minimatrix();
+Adafruit_8x16minimatrix matrix1 = Adafruit_8x16minimatrix();
+Adafruit_8x16minimatrix matrix2 = Adafruit_8x16minimatrix();
 
 void setup() {
   //while (!Serial);
   Serial.begin(9600);
   Serial.println("16x8 LED Mini Matrix Test");
   
-  matrix.begin(0x70);  // pass in the address
+  matrix1.begin(0x70);  // pass in the address
+  matrix2.begin(0x72);
 }
 
 static const uint8_t PROGMEM
@@ -60,64 +62,10 @@ static const uint8_t PROGMEM
     B00111100 };
 
 void loop() {
-  
-  matrix.clear();
-  matrix.drawBitmap(0, 0, smile_bmp, 8, 8, LED_ON);
-  matrix.writeDisplay();
-  delay(500);
-  
-  matrix.clear();
-  matrix.drawBitmap(0, 8, neutral_bmp, 8, 8, LED_ON);
-  matrix.writeDisplay();
-  delay(500);
-
-  matrix.clear();
-  matrix.drawBitmap(0, 0, frown_bmp, 8, 8, LED_ON);
-  matrix.writeDisplay();
-  delay(500);
-
-
-  matrix.drawPixel(0, 0, LED_ON);  
-  matrix.writeDisplay();  // write the changes we just made to the display
-  delay(500);
-
-  matrix.clear();
-  matrix.drawLine(0,0, 7,15, LED_ON);
-  matrix.writeDisplay();  // write the changes we just made to the display
-  delay(500);
-
-  matrix.clear();
-  matrix.drawRect(0,0, 8,16, LED_ON);
-  matrix.fillRect(2,2, 4,12, LED_ON);
-  matrix.writeDisplay();  // write the changes we just made to the display
-  delay(500);
-
-  matrix.clear();
-  matrix.drawCircle(3,8, 3, LED_ON);
-  matrix.writeDisplay();  // write the changes we just made to the display
-  delay(500);
-
-  matrix.setTextSize(2);
-  matrix.setTextWrap(false);  // we dont want text to wrap so it scrolls nicely
-  matrix.setTextColor(LED_ON);
-  for (int8_t x=0; x>=-64; x--) {
-    matrix.clear();
-    matrix.setCursor(x,0);
-    matrix.print("Hello");
-    matrix.writeDisplay();
-    delay(100);
-  }
-
-  matrix.setTextSize(1);
-  matrix.setTextWrap(false);  // we dont want text to wrap so it scrolls nicely
-  matrix.setTextColor(LED_ON);
-  matrix.setRotation(1);
-  for (int8_t x=7; x>=-36; x--) {
-    matrix.clear();
-    matrix.setCursor(x,0);
-    matrix.print("World");
-    matrix.writeDisplay();
-    delay(100);
-  }
-  matrix.setRotation(0);
+  matrix1.drawPixel(0,0,1);
+  //top right is 0 
+  //Row: 0 - 7
+  matrix2.drawPixel(0, 0, 1);
+  matrix1.writeDisplay();
+  matrix2.writeDisplay();
 }
