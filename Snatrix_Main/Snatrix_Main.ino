@@ -224,6 +224,9 @@ Pellet pellet;
 //Define a boolean to check whether to continue the game
 bool runGame;
 
+//Define a boolean to check if a direction change is allowed 
+bool directionChangeAllowed;
+
 //Define boolean values for checking if buttons are pressed
 /*
 bool leftCur;
@@ -259,6 +262,9 @@ void setup() {
   matrix1.begin(0x70); 
   matrix2.begin(0x72);
   Serial.begin(9600);
+
+  //Initialize direction change allowed to true
+  directionChangeAllowed = true; 
 }
 
 void loop() {
@@ -267,33 +273,37 @@ void loop() {
   currentTime = millis(); 
 
   //Control using Joystick
+  //First set a future direction to change after frame update
   int YAxisofJoyStick = analogRead(JOYSTICK_Y_pin);
   int XAxisofJoyStick = analogRead(JOYSTICK_X_pin);
 
   char snakeCurDirection = snake.getDirection(); 
   char snakeFutureDirection; 
 
-  if(YAxisofJoyStick > 1000) { 
+  if(YAxisofJoyStick > 1000 && directionChangeAllowed) { 
     if(snakeCurDirection == 'l' || snakeCurDirection == 'r') {
       snakeFutureDirection = 'u';
+      directionChangeAllowed = false;
     }
   }
-  if(YAxisofJoyStick < 100) { 
+  if(YAxisofJoyStick < 100 && directionChangeAllowed) { 
     if(snakeCurDirection == 'l' || snakeCurDirection == 'r') {
       snakeFutureDirection = 'd';
+      directionChangeAllowed = false;
     }
   }
-  if(XAxisofJoyStick > 1000) { 
+  if(XAxisofJoyStick > 1000 && directionChangeAllowed) { 
     if(snakeCurDirection == 'u' || snakeCurDirection == 'd') {
       snakeFutureDirection = 'r';
+      directionChangeAllowed = false;
     }
   }
-  if(XAxisofJoyStick < 100) { 
+  if(XAxisofJoyStick < 100 && directionChangeAllowed) { 
     if(snakeCurDirection == 'u' || snakeCurDirection == 'd') {
       snakeFutureDirection = 'l';
+      directionChangeAllowed = false;
     }
   }
-  snake.setDirection(snakeFutureDirection);
   
   //Control using Circuit Playground Buttons 
   /*
@@ -397,6 +407,10 @@ void loop() {
     }
     matrix1.writeDisplay();
     matrix2.writeDisplay();  // write the changes we just made to the display
+
+    //Update snake direction
+    snake.setDirection(snakeFutureDirection);
+    directionChangeAllowed = true;
     
     //define a boolean variable to check if the snake is out of bounds
      bool outOfBounds = false;
