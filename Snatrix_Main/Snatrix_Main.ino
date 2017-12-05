@@ -175,7 +175,7 @@ unsigned long currentTime;
 //Define a variable to store time of last board update
 unsigned long previousTime = 0;
 //Define a constant for board update interval
-const long interval = 100;
+const long interval = 50;
 
 //Splash Screens
 static const uint8_t PROGMEM
@@ -309,9 +309,6 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(digitalRead(JOYSTICK_SW_pin));
-  Serial.println(analogRead(JOYSTICK_Y_pin));
-  Serial.println(analogRead(JOYSTICK_X_pin));
   
   //While displaying startScreen
   if (startScreen) { 
@@ -322,7 +319,7 @@ void loop() {
     matrix1.writeDisplay();
     matrix2.writeDisplay();
 
-    if(digitalRead(JOYSTICK_SW_pin) == 1 && runGame == false) { 
+    if((analogRead(JOYSTICK_Y_pin) < 100 || analogRead(JOYSTICK_Y_pin) > 900 || analogRead(JOYSTICK_X_pin) < 100 || analogRead(JOYSTICK_X_pin) > 900) && runGame == false) { 
       matrix1.clear();
       matrix2.clear();
       startScreen = false;
