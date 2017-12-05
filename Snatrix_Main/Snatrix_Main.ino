@@ -11,7 +11,7 @@ Adafruit_8x16minimatrix matrix2 = Adafruit_8x16minimatrix();
 
 // Configure Arduino pin numbers
 //Configuration for joystick
-const int JOYSTICK_SW_pin = 2; // digital pin connected to switch output
+const int JOYSTICK_SW_pin = 8; // digital pin connected to switch output
 const int JOYSTICK_X_pin = 0; // analog pin connected to X output
 const int JOYSTICK_Y_pin = 1; // analog pin connected to Y output
 
@@ -175,7 +175,7 @@ unsigned long currentTime;
 //Define a variable to store time of last board update
 unsigned long previousTime = 0;
 //Define a constant for board update interval
-const long interval = 50;
+const long interval = 100;
 
 //Splash Screens
 static const uint8_t PROGMEM
@@ -306,20 +306,15 @@ void setup() {
 
   //Initialize direction change allowed to true
   directionChangeAllowed = true;
-
-
-  //Setup for Music
-  //The Circuit Playground attached to the Arduino Uno will play when the game is going on
-  pinMode(4, OUTPUT); 
-  digitalWrite(4, LOW); 
 }
 
 void loop() {
+  Serial.println(digitalRead(JOYSTICK_SW_pin));
+  Serial.println(analogRead(JOYSTICK_Y_pin));
+  Serial.println(analogRead(JOYSTICK_X_pin));
+  
   //While displaying startScreen
   if (startScreen) { 
-    //Output LOW for music play 
-    digitalWrite(4, LOW); 
-    
     matrix1.clear();
     matrix2.clear();
     matrix1.drawBitmap(0, 0, start_matrix_1, 8, 16, 1);
@@ -336,8 +331,6 @@ void loop() {
   }
   
   while (runGame) {
-    //Output high for music play 
-    digitalWrite(4, HIGH); 
     //Set currentTime equal to millis
     currentTime = millis();
 
@@ -536,9 +529,7 @@ void loop() {
   }
 
   //Show Game Over Splash Screen
-  while(gameOverScreen) { 
-    //Output low for music play 
-    digitalWrite(4, LOW); 
+  if(gameOverScreen) { 
     
     matrix1.clear();
     matrix2.clear();
