@@ -175,9 +175,9 @@ unsigned long currentTime;
 //Define a variable to store time of last board update
 unsigned long previousTime = 0;
 //Define a constant for board update interval
-const long interval = 500;
+const long interval = 50;
 
-//Splash Screen
+//Splash Screens
 static const uint8_t PROGMEM
 game_over_matrix_1[] =
 { B00000000,
@@ -214,6 +214,43 @@ game_over_matrix_2[] =
   B01101010,
   B00000000,
   B00000000
+},
+start_matrix_1[] = 
+{ B00000000, 
+  B01110100,
+  B01000110,
+  B01110101,
+  B00010100,
+  B01110100,
+  B01000000,
+  B01000111,
+  B01111100,
+  B00000000,
+  B01110111,
+  B00100101,
+  B00100101,
+  B00100110,
+  B00100101,
+  B00000000
+},
+start_matrix_2[] = 
+{
+  B00000000,
+  B01011110,
+  B01010010,
+  B01011110,
+  B11010010,
+  B01010010,
+  B00000000,
+  B11111010,
+  B00000000,
+  B00000000,
+  B01110101,
+  B00100101,
+  B00100010,
+  B00100101,
+  B01110101,
+  B00000000
 };
 
 //Define a snake object
@@ -224,6 +261,12 @@ Pellet pellet;
 
 //Define a boolean to check whether to continue the game
 bool runGame;
+
+//Define a boolean to check whether to bring up start screen
+bool startScreen; 
+
+//Define a boolean to check whether to bring up game over
+bool gameOverScreen;
 
 //Define a boolean to check if a direction change is allowed
 bool directionChangeAllowed;
@@ -239,25 +282,22 @@ bool directionChangeAllowed;
 void setup() {
   //CircuitPlayground.begin();
   Serial.begin(9600);
-  //Populate board and boardStatus
-  for (int row = 0; row < 16; row++) {
-    for (int column = 0; column < 16; column++) {
-      //Initialize entire board as off
-      board[row][column] = 0;
-    }
-  }
-  //Initialize a snake object
-  snake = Snake();
 
-  //Initialize a pellet object
-  pellet = Pellet();
+  
+  setUpBoard();
 
-  //Set runGame to be true
-  runGame = true;
+  //Set runGame to be false
+  runGame = false;
 
+  //Set startScreen to true
+  startScreen = true;
+
+  //Set gameOverScreen to false 
+  gameOverScreen = false; 
+  
   //Setup for Joystick
   pinMode(JOYSTICK_SW_pin, INPUT);
-  digitalWrite(JOYSTICK_SW_pin, HIGH);
+  digitalWrite(JOYSTICK_SW_pin, LOW);
 
   //Setup for Matrices
   matrix1.begin(0x70);
@@ -266,10 +306,38 @@ void setup() {
 
   //Initialize direction change allowed to true
   directionChangeAllowed = true;
+
+
+  //Setup for Music
+  //The Circuit Playground attached to the Arduino Uno will play when the game is going on
+  pinMode(4, OUTPUT); 
+  digitalWrite(4, LOW); 
 }
 
 void loop() {
+  //While displaying startScreen
+  if (startScreen) { 
+    //Output LOW for music play 
+    digitalWrite(4, LOW); 
+    
+    matrix1.clear();
+    matrix2.clear();
+    matrix1.drawBitmap(0, 0, start_matrix_1, 8, 16, 1);
+    matrix2.drawBitmap(0, 0, start_matrix_2, 8, 16, 1);
+    matrix1.writeDisplay();
+    matrix2.writeDisplay();
+
+    if(digitalRead(JOYSTICK_SW_pin) == 1 && runGame == false) { 
+      matrix1.clear();
+      matrix2.clear();
+      startScreen = false;
+      runGame = true; 
+    }
+  }
+  
   while (runGame) {
+    //Output high for music play 
+    digitalWrite(4, HIGH); 
     //Set currentTime equal to millis
     currentTime = millis();
 
@@ -461,17 +529,46 @@ void loop() {
         Serial.print("\n");
         Serial.print("GAME OVER!");
         runGame = false;
+        gameOverScreen = true; 
       }
     }
 
   }
 
   //Show Game Over Splash Screen
-  matrix1.clear();
-  matrix2.clear();
-  matrix1.drawBitmap(0, 0, game_over_matrix_1, 8, 16, 1);
-  matrix2.drawBitmap(0, 0, game_over_matrix_2, 8, 16, 1);
-  matrix1.writeDisplay();
-  matrix2.writeDisplay();
+  while(gameOverScreen) { 
+    //Output low for music play 
+    digitalWrite(4, LOW); 
+    
+    matrix1.clear();
+    matrix2.clear();
+    matrix1.drawBitmap(0, 0, game_over_matrix_1, 8, 16, 1);
+    matrix2.drawBitmap(0, 0, game_over_matrix_2, 8, 16, 1);
+    matrix1.writeDisplay();
+    matrix2.writeDisplay();
+    delay(3000); 
+    gameOverScreen = false; 
+    startScreen = true;
+    //Reset Board
+    setUpBoard();
+  }
 
 }
+
+//Function to set up a new board
+void setUpBoard() {
+  //Populate board and boardStatus
+  for (int row = 0; row < 16; row++) {
+    for (int column = 0; column < 16; column++) {
+      //Initialize entire board as off
+      board[row][column] = 0;
+    }
+  }
+  //Initialize a snake object
+  snake = Snake();
+
+  //Initialize a pellet object
+  pellet = Pellet();
+
+}
+
