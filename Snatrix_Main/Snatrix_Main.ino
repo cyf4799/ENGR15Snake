@@ -389,15 +389,6 @@ void loop() {
       int pelletColumn = pellet.getColumn();
       board[pelletRow][pelletColumn] = 3;
 
-      //Print board to Serial
-      for (int row = 0; row < 16; row++) {
-        for (int column = 0; column < 16; column++) {
-          Serial.print(board[row][column]);
-        }
-        Serial.println("");
-      }
-      Serial.println("");
-
       //Print Board to LED Matrix
       //Print first half of board to matrix1
       for (int row = 0; row < 16; row++) {
@@ -412,6 +403,15 @@ void loop() {
       }
       matrix1.writeDisplay();
       matrix2.writeDisplay();  // write the changes we just made to the display
+
+      //Print board to Serial
+      for (int row = 0; row < 16; row++) {
+        for (int column = 0; column < 16; column++) {
+          Serial.print(board[row][column]);
+        }
+        Serial.println("");
+      }
+      Serial.println("");
 
       //Update snake direction
       snake.setDirection(snakeFutureDirection);
